@@ -1,0 +1,471 @@
+//Booking.java
+import java.util.Date;
+public class Booking {
+    private Room room;
+    private Customer customer;
+    private Date checkInDate;
+    private Date checkOutDate;
+    public Booking(Room room, Customer customer, Date checkInDate, Date checkOutDate) {
+        this.room = room;
+        this.customer = customer;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        room.setAvailable(false);
+    }
+    public Room getRoom() {
+        return room;
+    }
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+    public Customer getCustomer() {
+        return customer;
+    }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+}
+//BookingDisplay.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class BookingDisplay {
+    public static void displayBookedRooms(ArrayList<Booking> bookings) {
+        if (bookings.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No rooms have been booked yet.");
+            return;
+        }
+
+        StringBuilder bookedRooms = new StringBuilder("Booked Rooms:\n");
+        for (Booking booking : bookings) {
+            bookedRooms.append("Room ID: ").append(booking.getRoom().getRoomId())
+                    .append(", Customer: ").append(booking.getCustomer().getFirstName()).append(" ")
+                    .append(booking.getCustomer().getLastName())
+                    .append(", Check-In: ").append(booking.getCheckInDate())
+                    .append(", Check-Out: ").append(booking.getCheckOutDate())
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(null, bookedRooms.toString(), "Booked Rooms", JOptionPane.INFORMATION_MESSAGE);
+    }
+}
+//Customer.java
+public class Customer {
+    private String firstName;
+    private String lastName;
+    private long mobileNumber;
+    public Customer(String firstName, String lastName, long mobileNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mobileNumber = mobileNumber;
+    }
+    public String getFirstName() {
+        return firstName;
+    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public String getLastName() {
+        return lastName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public long getMobileNumber() {
+        return mobileNumber;
+    }
+    public void setMobileNumber(long mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+}
+//CustomerDisplay.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class CustomerDisplay {
+    public static void displayAllCustomers(ArrayList<Customer> customers) {
+        if (customers.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No customers registered yet.");
+            return;
+        }
+
+        StringBuilder customerList = new StringBuilder("Customer List:\n");
+        for (Customer customer : customers) {
+            customerList.append(customer.getFirstName()).append(" ").append(customer.getLastName())
+                    .append(", Mobile: ").append(customer.getMobileNumber()).append("\n");
+        }
+        JOptionPane.showMessageDialog(null, customerList.toString(), "Customers", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void displaySpecificCustomer(ArrayList<Customer> customers) {
+        if (customers.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No customers registered yet.");
+            return;
+        }
+
+        String firstName = JOptionPane.showInputDialog("Enter customer's first name:");
+        String lastName = JOptionPane.showInputDialog("Enter customer's last name:");
+
+        boolean found = false;
+        for (Customer customer : customers) {
+            if (customer.getFirstName().equalsIgnoreCase(firstName) && customer.getLastName().equalsIgnoreCase(lastName)) {
+                JOptionPane.showMessageDialog(null, "Customer found:\n" +
+                        "Name: " + customer.getFirstName() + " " + customer.getLastName() + "\n" +
+                        "Mobile: " + customer.getMobileNumber());
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            JOptionPane.showMessageDialog(null, "Customer not found.");
+        }
+    }
+}
+//CustomerRegistration.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class CustomerRegistration {
+    public static void registerCustomer(ArrayList<Customer> customers) {
+        String firstName = JOptionPane.showInputDialog("Enter First Name:");
+        String lastName = JOptionPane.showInputDialog("Enter Last Name:");
+        try {
+            long mobileNumber = Long.parseLong(JOptionPane.showInputDialog("Enter Mobile Number:"));
+            Customer customer = new Customer(firstName, lastName, mobileNumber);
+            customers.add(customer);
+            JOptionPane.showMessageDialog(null, "Customer registered successfully!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid mobile number format. Please try again.");
+        }
+    }
+}
+//Room.java
+public class Room {
+    private int roomId; 
+    private String roomType; 
+    private int capacity; 
+    private boolean available; 
+    public Room(int roomId, String roomType, int capacity) {
+        this.roomId = roomId;
+        this.roomType = roomType;
+        this.capacity = capacity;
+        this.available = true;
+    }
+    public int getRoomId() {
+        return roomId;
+    }
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+    public String getRoomType() {
+        return roomType;
+    }
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+    public int getCapacity() {
+        return capacity;
+    }
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+    public boolean isAvailable() {
+        return available;
+    }
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+// RoomBooking.java
+import javax.swing.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class RoomBooking {
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    public static void bookRoom(ArrayList<Room> rooms, ArrayList<Booking> bookings) {
+        if (rooms.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No rooms available for booking.");
+            return;
+        }
+
+        // Display available rooms
+        StringBuilder roomOptionsBuilder = new StringBuilder("Available Rooms:\n");
+        for (Room room : rooms) {
+            if (room.isAvailable()) {
+                roomOptionsBuilder.append("Room ID: ").append(room.getRoomId())
+                        .append(", Type: ").append(room.getRoomType())
+                        .append(", Capacity: ").append(room.getCapacity())
+                        .append("\n");
+            }
+        }
+        String[] roomOptions = roomOptionsBuilder.toString().split("\n");
+        String selectedRoom = (String) JOptionPane.showInputDialog(null, "Select a room to book:", "Book Room",
+                JOptionPane.PLAIN_MESSAGE, null, roomOptions, roomOptions[0]);
+
+        if (selectedRoom == null) {
+            return; // User canceled booking
+        }
+
+        // Extract room ID from selectedRoom string
+        int roomId = Integer.parseInt(selectedRoom.split(":")[1].trim());
+
+        // Find the room object corresponding to the selected room ID
+        Room selectedRoomObj = null;
+        for (Room room : rooms) {
+            if (room.getRoomId() == roomId) {
+                selectedRoomObj = room;
+                break;
+            }
+        }
+
+        // Ask for customer details
+        String firstName = JOptionPane.showInputDialog("Enter Customer First Name:");
+        String lastName = JOptionPane.showInputDialog("Enter Customer Last Name:");
+        long mobileNumber = 0;
+        boolean validMobileNumber = false;
+        while (!validMobileNumber) {
+            try {
+                mobileNumber = Long.parseLong(JOptionPane.showInputDialog("Enter Customer Mobile Number:"));
+                validMobileNumber = true;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Invalid mobile number format. Please try again.");
+            }
+        }
+
+        // Create customer object
+        Customer customer = new Customer(firstName, lastName, mobileNumber);
+
+        // Ask for check-in and check-out dates
+        Date checkInDate = getValidDateInput("Enter Check-In Date (YYYY-MM-DD): ");
+        Date checkOutDate = getValidDateInput("Enter Check-Out Date (YYYY-MM-DD): ");
+
+        // Create booking object
+        Booking booking = new Booking(selectedRoomObj, customer, checkInDate, checkOutDate);
+
+        // Update room availability
+        selectedRoomObj.setAvailable(false);
+
+        // Add booking to bookings list
+        bookings.add(booking);
+
+        JOptionPane.showMessageDialog(null, "Room booked successfully!");
+    }
+
+    private static Date getValidDateInput(String message) {
+        while (true) {
+            try {
+                String dateStr = JOptionPane.showInputDialog(message);
+                return dateFormat.parse(dateStr);
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(null, "Invalid date format. Please try again.");
+            }
+        }
+    }
+}
+//RoomManagement.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class RoomManagement {
+    public static void addRoom(ArrayList<Room> rooms) {
+        try {
+            int roomId = Integer.parseInt(JOptionPane.showInputDialog("Enter Room ID:"));
+            String roomType = JOptionPane.showInputDialog("Enter Room Type:");
+            int capacity = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Capacity:"));
+            Room room = new Room(roomId, roomType, capacity);
+            rooms.add(room);
+            JOptionPane.showMessageDialog(null, "Room added successfully!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid input format. Please enter valid data.");
+        }
+    }
+}
+//Staff.java
+public class Staff {
+    private int staffId;
+    private String name;
+    private String role;
+    public Staff(int staffId, String name, String role) {
+        this.staffId = staffId;
+        this.name = name;
+        this.role = role;
+    }
+    public int getStaffId() {
+        return staffId;
+    }
+    public void setStaffId(int staffId) {
+        this.staffId = staffId;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+}
+//StaffDisplay.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class StaffDisplay {
+    public static void displayAllStaff(ArrayList<Staff> staff) {
+        if (staff.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No staff members registered yet.");
+            return;
+        }
+
+        StringBuilder staffList = new StringBuilder("Staff List:\n");
+        for (Staff staffMember : staff) {
+            staffList.append(staffMember.getName()).append(" (Role: ").append(staffMember.getRole()).append(")\n");
+        }
+        JOptionPane.showMessageDialog(null, staffList.toString(), "Staff", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void displaySpecificStaff(ArrayList<Staff> staff) {
+        if (staff.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No staff members registered yet.");
+            return;
+        }
+
+        int staffId = Integer.parseInt(JOptionPane.showInputDialog("Enter staff ID:"));
+
+        boolean found = false;
+        for (Staff staffMember : staff) {
+            if (staffMember.getStaffId() == staffId) {
+                JOptionPane.showMessageDialog(null, "Staff member found:\n" +
+                        "Name: " + staffMember.getName() + "\n" +
+                        "Role: " + staffMember.getRole());
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            JOptionPane.showMessageDialog(null, "Staff member not found.");
+        }
+    }
+}
+//StaffRegistration.java
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class StaffRegistration {
+    public static void registerStaff(ArrayList<Staff> staff) {
+        try {
+            int staffId = Integer.parseInt(JOptionPane.showInputDialog("Enter Staff ID:"));
+            String name = JOptionPane.showInputDialog("Enter Staff Name:");
+            String role = JOptionPane.showInputDialog("Enter Staff Role (e.g., Manager, Receptionist):");
+            Staff staffMember = new Staff(staffId, name, role);
+            staff.add(staffMember);
+            JOptionPane.showMessageDialog(null, "Staff member registered successfully!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid Staff ID format. Please enter a valid integer.");
+        }
+    }
+}
+//HotelManagementSystemGUI.java
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class HotelManagementSystemGUI extends JFrame {
+    private JPanel mainPanel = new JPanel(new GridLayout(4, 3, 10, 10));
+    private static final ArrayList<Customer> customers = new ArrayList<>();
+    private static final ArrayList<Staff> staff = new ArrayList<>();
+    private static final ArrayList<Room> rooms = new ArrayList<>();
+    private static final ArrayList<Booking> bookings = new ArrayList<>();
+
+    public HotelManagementSystemGUI() {
+        setTitle("Hotel Management System");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        add(mainPanel, BorderLayout.CENTER);
+        addButtons();
+        pack();
+        setLocationRelativeTo(null); // Center the window on the screen
+        setVisible(true);
+    }
+
+    private void addButtons() {
+        mainPanel.add(createButton("Register Customer", e -> CustomerRegistration.registerCustomer(customers)));
+        mainPanel.add(createButton("Register Staff", e -> StaffRegistration.registerStaff(staff)));
+        mainPanel.add(createButton("Display All Customers", e -> CustomerDisplay.displayAllCustomers(customers)));
+        mainPanel.add(createButton("Display Specific Customer", e -> CustomerDisplay.displaySpecificCustomer(customers)));
+        mainPanel.add(createButton("Display All Staff", e -> StaffDisplay.displayAllStaff(staff)));
+        mainPanel.add(createButton("Display Specific Staff", e -> StaffDisplay.displaySpecificStaff(staff)));
+        mainPanel.add(createButton("Book Room", e -> RoomBooking.bookRoom(rooms, bookings)));
+        mainPanel.add(createButton("Check Availability", e -> checkAvailability()));
+        mainPanel.add(createButton("Display Booked Rooms", e -> BookingDisplay.displayBookedRooms(bookings)));
+        mainPanel.add(createButton("Add Room", e -> RoomManagement.addRoom(rooms)));
+        mainPanel.add(createButton("Display Available Rooms", e -> displayAvailableRooms()));
+        mainPanel.add(createButton("Exit", e -> exitApplication()));
+    }
+
+    private JButton createButton(String text, ActionListener actionListener) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        return button;
+    }
+
+    private void checkAvailability() {
+        StringBuilder availableRooms = new StringBuilder("Available Rooms:\n");
+        boolean foundAvailableRoom = false;
+        for (Room room : rooms) {
+            if (room.isAvailable()) {
+                availableRooms.append("Room ID: ").append(room.getRoomId()).append("\n");
+                foundAvailableRoom = true;
+            }
+        }
+        if (foundAvailableRoom) {
+            JOptionPane.showMessageDialog(this, availableRooms.toString(), "Available Rooms", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No rooms available for booking.", "Availability", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void displayAvailableRooms() {
+        StringBuilder availableRooms = new StringBuilder("Available Rooms:\n");
+        for (Room room : rooms) {
+            availableRooms.append("Room ID: ").append(room.getRoomId())
+                    .append(", Type: ").append(room.getRoomType())
+                    .append(", Capacity: ").append(room.getCapacity())
+                    .append("\n");
+        }
+        JOptionPane.showMessageDialog(this, availableRooms.toString(), "Available Rooms", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void exitApplication() {
+        int confirmed = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the application?",
+                "Confirm Exit", JOptionPane.YES_NO_OPTION);
+        if (confirmed == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(HotelManagementSystemGUI::new);
+    }
+}
