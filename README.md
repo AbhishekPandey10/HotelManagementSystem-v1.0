@@ -20,7 +20,7 @@ The **Hotel Management System** is a Java-based application with a graphical use
 2. Clone the repository or download the source code.
 
    ```bash
-   git clone https://github.com/YourGitHubUsername/HotelManagementSystem.git
+   git clone https://github.com/AbhishekPandey10/HotelManagementSystem-v1.0.git
 3. Open the project in your favorite Java IDE (e.g., IntelliJ IDEA, Eclipse, NetBeans), or compile and run it from the command line.
 To compile from the command line:
 javac *.java
